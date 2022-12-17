@@ -14,7 +14,7 @@ export default function Body({transColor,setTransColor,allColor,setAllColor,acti
                 <Route path="/trendings" element={<Trendings/>}/>
                 <Route path="/favorites" element={<Favorites/>}/>
                 <Route path="/library" element={<Library/>}/>
-                <Route path="/settings" element={<Settings setTransColor={setTransColor} allColor={allColor} setAllColor={setAllColor}/>}/>
+                <Route path="/settings" element={<Settings transColor={transColor} setTransColor={setTransColor} allColor={allColor} setAllColor={setAllColor}/>}/>
             </Routes>
         </div>
     )

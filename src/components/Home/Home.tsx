@@ -2,37 +2,46 @@ import React,{useState,useEffect} from 'react'
 import CurrentSong from '../CurrentSong/CurrentSong'
 import Tracks from '../Tracks/Tracks'
 
-export default function Home({transColor,displayTrack}:any) {
+
+export default function Home({transColor,allColor,displayTrack}:any) {
     const initialItems = [
         {
             id:0,
-            name:"🍅 Tomato"
+            name:"Apna Bana Le",
+            artist: "Arijit Singh",
+            src:"static/Apna-Bana-Le.mp3"
         }, 
         {
             id:1,
-            name:"🥒 Cucumber"
+            name:"Deva Deva",
+            artist: "Arijit Singh",
+            src:"static/Deva_Deva.mp3"
         },
         {
             id:2, 
-            name:"🧀 Cheese"
+            name:"Kesariye Tera",
+            artist: "Arijit Singh",
+            src:"static/Kesariya_Tera.mp3"
         },
         {
             id:3,
-            name: "🥬 Lettuce"
+            name:"Makhmali",
+            artist: "Arijit Singh",
+            src:"static/Makhmali.mp3"
         }
     ];
-    const [currentSong,setCurrentSong] = useState(initialItems[0]);
+    const [currentSong,setCurrentSong] = useState(initialItems[1]);
     const [trackSongs,setTrackSongs] = useState(initialItems);
     useEffect(()=>{
         const updateSongs = initialItems.filter((item)=>{
             return item.id!==currentSong.id;
         })
         setTrackSongs(updateSongs);
-    },[currentSong]);
-    console.log(trackSongs)
+    },[]);
+    // console.log(trackSongs)
     return (
         <>
-            <CurrentSong currentSong={currentSong} setCurrentSong={setCurrentSong}/>
+            <CurrentSong transColor={transColor} trackSongs={trackSongs} setTrackSongs={setTrackSongs} allColor={allColor} currentSong={currentSong} setCurrentSong={setCurrentSong}/>
             <Tracks transColor={transColor} nowPlaying={currentSong} trackSongs={trackSongs} setTrackSongs={setTrackSongs} displayTrack={displayTrack}/>
         </>
     )

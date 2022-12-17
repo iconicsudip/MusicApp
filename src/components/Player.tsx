@@ -6,7 +6,7 @@ import Header from './Header/Header'
 export default function Player() {
     let [activeBodyslide,setBodyslide] = useState<Boolean>(true);
     let [displayTrack,setTrack] = useState<Boolean>(false);
-    let [transColor,setTransColor] = useState("#ffc835c2");
+    let [transColor,setTransColor] = useState("#ffc83570");
     let [allColor,setAllColor] = useState("#ffc835")
     return (
         <div style={{"background":allColor}} className="song">
