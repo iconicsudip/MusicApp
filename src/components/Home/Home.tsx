@@ -3,7 +3,7 @@ import CurrentSong from '../CurrentSong/CurrentSong'
 import Tracks from '../Tracks/Tracks'
 
 
-export default function Home({transColor,allColor,displayTrack}:any) {
+export default function Home({audio,setAudio,transColor,allColor,displayTrack}:any) {
     const initialItems = [
         {
             id:0,
@@ -41,7 +41,7 @@ export default function Home({transColor,allColor,displayTrack}:any) {
     // console.log(trackSongs)
     return (
         <>
-            <CurrentSong transColor={transColor} trackSongs={trackSongs} setTrackSongs={setTrackSongs} allColor={allColor} currentSong={currentSong} setCurrentSong={setCurrentSong}/>
+            <CurrentSong transColor={transColor} audio={audio} setAudio={setAudio} trackSongs={trackSongs} setTrackSongs={setTrackSongs} allColor={allColor} currentSong={currentSong} setCurrentSong={setCurrentSong}/>
             <Tracks transColor={transColor} nowPlaying={currentSong} trackSongs={trackSongs} setTrackSongs={setTrackSongs} displayTrack={displayTrack}/>
         </>
     )

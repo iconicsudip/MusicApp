@@ -6,8 +6,8 @@ import * as mm from 'music-metadata';
 
 
 
-export default function CurrentSong({transColor,allColor,currentSong,trackSongs,setTrackSongs,setCurrentSong}:any) {
-    const [audio,setAudio] = useState(new Audio(currentSong.src));
+export default function CurrentSong({setAudio,audio,transColor,allColor,currentSong,trackSongs,setTrackSongs,setCurrentSong}:any) {
+    const [runAudio,setrunAudio] = useState(false);
     const [isPlay,setPlay] = useState<Boolean>(true);
     const [currentTime,setCurrentTime] = useState(audio.currentTime);
     const [progressTime,setProgressTime] = useState(0);
@@ -17,7 +17,6 @@ export default function CurrentSong({transColor,allColor,currentSong,trackSongs,
     const [seconds,setSeconds] = useState<any | String>(0);
     const [minutes,setMinutes] = useState(0)
     useEffect(()=>{
-        console.log(audio.currentTime)
         if(audio.paused){
             setDiskPlay("stop-disk");
             setPlay(true);
@@ -25,23 +24,31 @@ export default function CurrentSong({transColor,allColor,currentSong,trackSongs,
         if(!audio.paused){
             setDiskPlay("on-disk");
             setPlay(false);
+            // audio.play()
         }
-    },[audio])
+    },[diskPlay,isPlay])
+    
     useEffect(()=>{
         audio.pause();
         audio.currentTime = 0;
         setAudio(new Audio(currentSong.src));
         
     },[currentSong])
+
+    // useEffect(()=>{
+    //     console.log(runAudio)
+    //     audio.pause();
+    //     audio.currentTime = 0;
+    //     if(audio && runAudio){
+    //         audio.play();
+    //     }
+    // },[runAudio,audio])
     const playTrack = ()=>{
-        // console.log(audio.currentTime)
         setPlay(false);
         setDiskPlay("on-disk");
         audio.play();
-        
     }
     const pauseTrack = ()=>{
-        console.log("Pause")
         setPlay(true);
         setDiskPlay("stop-disk");
         audio.pause();
@@ -49,10 +56,8 @@ export default function CurrentSong({transColor,allColor,currentSong,trackSongs,
     const controlSuffle =()=>{
         if(isSuffle){
             setSuffle(false)
-            console.log("suffle off")
         }else{
             setSuffle(true);
-            console.log("suffle on")
         }
     }
     const controlLoop =()=>{
@@ -67,29 +72,68 @@ export default function CurrentSong({transColor,allColor,currentSong,trackSongs,
     const prevTrack = ()=>{
         audio.pause();
         audio.currentTime = 0;
-        let tempSongs = [currentSong,...trackSongs];
-        let newSong = tempSongs[tempSongs.length-1];
-        let newTrack = tempSongs.filter((song)=>{
-            return song.id!==newSong.id;
-        })
-        setTrackSongs(newTrack)
-        setCurrentSong(newSong)
+        if(isSuffle){
+            let filterTrack = trackSongs.filter((song:any)=>{
+                return song.id!==currentSong.id;
+            })
+            let rand = Math.random() * filterTrack.length;
+            let index = Math.floor(rand)
+            let newSong = trackSongs[index];
+            let tempSongs = [currentSong,...trackSongs];
+            let newTrack = tempSongs.filter((song)=>{
+                return song.id!==newSong.id;
+            })
+            setTrackSongs(newTrack)
+            setCurrentSong(newSong)
+        }else{
+            let tempSongs = [currentSong,...trackSongs];
+            let newSong = tempSongs[tempSongs.length-1];
+            let newTrack = tempSongs.filter((song)=>{
+                return song.id!==newSong.id;
+            })
+            setTrackSongs(newTrack)
+            setCurrentSong(newSong)
+        }
     }
     const nextTrack = ()=>{
-        audio.pause();
-        audio.currentTime = 0;
-        let tempSongs = [...trackSongs,currentSong];
-        let newSong = tempSongs[0];
-        let newTrack = tempSongs.filter((song)=>{
-            return song.id!==newSong.id;
-        })
-        setTrackSongs(newTrack)
-        setCurrentSong(newSong)
+        if(isSuffle){
+            let filterTrack = trackSongs.filter((song:any)=>{
+                return song.id!==currentSong.id;
+            })
+            let rand = Math.random() * filterTrack.length;
+            let index = Math.floor(rand)
+            let newSong = trackSongs[index];
+            let tempSongs = [...trackSongs,currentSong];
+            let newTrack = tempSongs.filter((song)=>{
+                return song.id!==newSong.id;
+            })
+            setTrackSongs(newTrack)
+            setCurrentSong(newSong)
+        }else{
+            let tempSongs = [...trackSongs,currentSong];
+            let newSong = tempSongs[0];
+            let newTrack = tempSongs.filter((song)=>{
+                return song.id!==newSong.id;
+            })
+            setTrackSongs(newTrack)
+            setCurrentSong(newSong)
+        }
+        playTrack()
     }
-    audio.addEventListener('timeupdate',(e)=>{
+    const audioPosition = (e:any)=>{
+        const audioPos = (e.nativeEvent.offsetX/e.target.clientWidth)*audio.duration;
+        audio.currentTime = audioPos;
+    }
+    audio.addEventListener('timeupdate',()=>{
         if(audio.currentTime===audio.duration){
-            nextTrack()
-            playTrack()
+            if(isLoop){
+                console.log('loop on')
+                audio.currentTime = 0;
+                playTrack()
+            }else{
+                nextTrack()
+                playTrack()
+            }
         }
         setCurrentTime(audio.currentTime);
         setProgressTime((audio.currentTime/audio.duration)*100)
@@ -118,7 +162,7 @@ export default function CurrentSong({transColor,allColor,currentSong,trackSongs,
                         </>
                         :'0:00'}</span>
                 </div>
-                <div id="progress-bar">
+                <div id="progress-bar" onClick={audioPosition}>
                     <div id="progress" style={{"background":allColor,"width":progressTime+"%"}}></div>
                 </div>
                 <div className="play-options">

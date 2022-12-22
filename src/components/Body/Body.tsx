@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import {Routes, Route} from 'react-router-dom'
 import Favorites from '../Favorites/Favorites'
 import Home from '../Home/Home'
@@ -7,10 +7,11 @@ import Settings from '../Settings/Settings'
 import Trendings from '../Trendings/Trendings'
 
 export default function Body({transColor,setTransColor,allColor,setAllColor,activeBodyslide,displayTrack}:any) {
+    const [audio,setAudio] = useState(new Audio());
     return (
         <div className={activeBodyslide===false?"body":"body bodyanimate"}>
             <Routes>
-                <Route path="/" element={<Home transColor={transColor} allColor={allColor} displayTrack={displayTrack}/>}/>
+                <Route path="/" element={<Home audio={audio} setAudio={setAudio} transColor={transColor} allColor={allColor} displayTrack={displayTrack}/>}/>
                 <Route path="/trendings" element={<Trendings/>}/>
                 <Route path="/favorites" element={<Favorites/>}/>
                 <Route path="/library" element={<Library/>}/>
