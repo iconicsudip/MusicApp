@@ -7,7 +7,6 @@ import * as mm from 'music-metadata';
 
 
 export default function CurrentSong({setAudio,audio,transColor,allColor,currentSong,trackSongs,setTrackSongs,setCurrentSong}:any) {
-    const [runAudio,setrunAudio] = useState(false);
     const [isPlay,setPlay] = useState<Boolean>(true);
     const [currentTime,setCurrentTime] = useState(audio.currentTime);
     const [progressTime,setProgressTime] = useState(0);
@@ -35,14 +34,14 @@ export default function CurrentSong({setAudio,audio,transColor,allColor,currentS
         
     },[currentSong])
 
-    // useEffect(()=>{
-    //     console.log(runAudio)
-    //     audio.pause();
-    //     audio.currentTime = 0;
-    //     if(audio && runAudio){
-    //         audio.play();
-    //     }
-    // },[runAudio,audio])
+    useEffect(()=>{
+        console.log(isPlay)
+        audio.pause();
+        audio.currentTime = 0;
+        if(audio.paused && !isPlay){
+            audio.play();
+        }
+    },[isPlay,audio])
     const playTrack = ()=>{
         setPlay(false);
         setDiskPlay("on-disk");
@@ -94,8 +93,13 @@ export default function CurrentSong({setAudio,audio,transColor,allColor,currentS
             setTrackSongs(newTrack)
             setCurrentSong(newSong)
         }
+        if(!isPlay){
+            audio.play()
+        }
     }
     const nextTrack = ()=>{
+        audio.pause();
+        audio.currentTime = 0;
         if(isSuffle){
             let filterTrack = trackSongs.filter((song:any)=>{
                 return song.id!==currentSong.id;
@@ -118,7 +122,9 @@ export default function CurrentSong({setAudio,audio,transColor,allColor,currentS
             setTrackSongs(newTrack)
             setCurrentSong(newSong)
         }
-        playTrack()
+        if(!isPlay){
+            audio.play()
+        }
     }
     const audioPosition = (e:any)=>{
         const audioPos = (e.nativeEvent.offsetX/e.target.clientWidth)*audio.duration;
